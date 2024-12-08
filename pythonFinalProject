@@ -1,0 +1,108 @@
+from PIL import Image
+import pytesseract
+import re
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Step 1: 提取圖片中的數據，並將其轉換為 DataFrame
+image_files = [f"s{i}.png" for i in range(1, 11)]
+product_data_list = []
+
+for image_path in image_files:
+    image = Image.open(image_path)  # 直接加載圖片，假設圖片必然存在
+
+    # 提取圖片中的文字
+    content = [line.strip() for line in pytesseract.image_to_string(image).split("\n") if line.strip()]
+
+    # 初始化數據變量
+    discounted_price = original_price = product_name = unit_price = "N/A"
+
+    if len(content) >= 3:
+        last_line, second_last_line, third_last_line = content[-1], content[-2], content[-3]
+        numbers = re.findall(r'\d+\.\d+|\d+', third_last_line)
+        if len(numbers) >= 2:
+            discounted_price, original_price = numbers[0], numbers[1]
+            product_name, unit_price = second_last_line, last_line
+        elif len(content) >= 4:
+            fourth_last_line = content[-4]
+            numbers = re.findall(r'\d+\.\d+|\d+', fourth_last_line)
+            if len(numbers) >= 2:
+                discounted_price, original_price = numbers[0], numbers[1]
+                product_name = f"{third_last_line} {second_last_line}"
+                unit_price = last_line
+
+    def clean_price_value(value):
+        """將價格字符串轉換為浮點數"""
+        if re.match(r"^\d+(\.\d+)?$", str(value)):
+            float_value = float(value)
+            return float_value / 100 if 100 <= float_value < 1000 else float_value
+        return 0  # 保證始終返回數字
+
+    discounted_price = clean_price_value(discounted_price)
+    original_price = clean_price_value(original_price)
+
+    product_data_list.append({
+        "Product Name": product_name,
+        "Discounted Price": discounted_price,
+        "Original Price": original_price,
+        "Unit Price": unit_price
+    })
+
+# Step 2: 構建 DataFrame，計算 Discount Value，並標記最大折扣的商品
+df_products = pd.DataFrame(product_data_list)
+
+# 轉換為浮點數，並處理無效的數據
+df_products['Discounted Price'] = pd.to_numeric(df_products['Discounted Price'], errors='coerce').fillna(0)
+df_products['Original Price'] = pd.to_numeric(df_products['Original Price'], errors='coerce').fillna(0)
+
+# 計算折扣金額，將 NaN 替換為 0
+df_products['Discount Value'] = (df_products['Original Price'] - df_products['Discounted Price']).fillna(0)
+
+# **標記最大折扣的商品**
+max_discount_index = df_products['Discount Value'].idxmax()  # 無需檢查 NaN，因為 fillna(0) 已處理
+df_products.loc[max_discount_index, 'Max Discount'] = 'MAX'
+print(df_products)
+# Step 3: 使用 with open 將 DataFrame 輸出為 JSON 和 CSV 文件
+with open("output_data.json", "w", encoding="utf-8") as json_file:
+    json_file.write(df_products.to_json(orient='records', force_ascii=False, indent=4))
+
+df_products.to_csv("output_data.csv", index=False, encoding='utf-8-sig')
+
+# Step 4: 可視化折扣金額，並標註最大折扣的商品
+fig, ax = plt.subplots(figsize=(12, 6))
+
+product_names = df_products['Product Name']
+original_prices = df_products['Original Price']
+discounted_prices = df_products['Discounted Price']
+discount_values = df_products['Discount Value']
+
+ax.plot(product_names, original_prices, 'b-o', label='Original Price')
+ax.plot(product_names, discounted_prices, 'r-o', label='Discounted Price')
+ax.plot(product_names, discount_values, 'y-o', label='Discount Value')
+
+# 在圖表中標註最大折扣的商品
+max_discount_item = df_products.loc[max_discount_index]
+ax.text(max_discount_index, max_discount_item['Discount Value'], 
+        'MAX', color='red', weight='bold', fontsize=12, 
+        ha='center', va='bottom')
+ax.scatter(max_discount_index, max_discount_item['Discount Value'], 
+           color='red', s=100, label='Max Discount')
+
+# 在每個數據點上標示數值
+for i, (orig, disc, val) in enumerate(zip(original_prices, discounted_prices, discount_values)):
+    ax.text(i, orig, f"${orig:.2f}", ha='center', va='bottom', color='blue', fontsize=9)
+    ax.text(i, disc, f"${disc:.2f}", ha='center', va='bottom', color='red', fontsize=9)
+    ax.text(i, val, f"${val:.2f}", ha='center', va='bottom', color='orange', fontsize=9)
+
+ax.set_xlabel('Product Name')
+ax.set_ylabel('Price ($)')
+ax.set_title('Price Comparison: Original, Discounted, and Discount Value')
+ax.set_xticks(range(len(product_names)))
+ax.set_xticklabels(product_names, rotation=45, ha='right')
+
+max_y = int(df_products[['Original Price', 'Discounted Price', 'Discount Value']].max().max()) + 2
+ax.set_yticks(range(0, max_y + 1, 2))
+ax.legend()
+ax.grid(True)
+plt.tight_layout()
+plt.show()
