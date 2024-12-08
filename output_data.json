@@ -1,0 +1,82 @@
+[
+    {
+        "Product Name":"Bartlett Pear",
+        "Discounted Price":0.95,
+        "Original Price":2.35,
+        "Unit Price":"($1.89 \/ Lb)",
+        "Discount Value":1.4,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"Signature SELECT Juice Apple - 64 FI. Oz.",
+        "Discounted Price":2.5,
+        "Original Price":2.79,
+        "Unit Price":"($0.04 \/ Foz)",
+        "Discount Value":0.29,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"Signature SELECT Ice Cream Vanilla - 1.50 Quart",
+        "Discounted Price":3.99,
+        "Original Price":4.99,
+        "Unit Price":"($2.66 \/ Quart)",
+        "Discount Value":1.0,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"© Organics Organic Popcorn Sea Salt - 5 Oz",
+        "Discounted Price":2.99,
+        "Original Price":3.99,
+        "Unit Price":"($0.60 \/ Ounce)",
+        "Discount Value":1.0,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"‘Signature SELECT Refreshe Drinking Water - 24-16.9 FI. Oz.",
+        "Discounted Price":2.99,
+        "Original Price":4.99,
+        "Unit Price":"($0.01 \/ Foz)",
+        "Discount Value":2.0,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"Previously Frozen Raw Extra Jumbo Shrimp 16-20 Ct - 1 Lb",
+        "Discounted Price":5.99,
+        "Original Price":9.99,
+        "Unit Price":"($5.99 \/ Lb)",
+        "Discount Value":4.0,
+        "Max Discount":"MAX"
+    },
+    {
+        "Product Name":"Lucerne Yogurt Lowfat Strawberry Flavored - 32 Oz",
+        "Discounted Price":3.0,
+        "Original Price":3.29,
+        "Unit Price":"($0.09 \/ Ounce)",
+        "Discount Value":0.29,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"Brussels Sprouts - 1 Lb",
+        "Discounted Price":0.99,
+        "Original Price":2.99,
+        "Unit Price":"($0.99 \/ Lb)",
+        "Discount Value":2.0,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"Signature SELECT Crackers Saltine - 16 Oz",
+        "Discounted Price":1.99,
+        "Original Price":3.49,
+        "Unit Price":"(80.12 \/ Ounce)",
+        "Discount Value":1.5,
+        "Max Discount":null
+    },
+    {
+        "Product Name":"Lucerne Cream Cheese - 8 Oz",
+        "Discounted Price":1.99,
+        "Original Price":3.29,
+        "Unit Price":"($0.25 \/ Ounce)",
+        "Discount Value":1.3,
+        "Max Discount":null
+    }
+]
